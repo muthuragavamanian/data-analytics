@@ -1,0 +1,149 @@
+---
+title: "Migration Dashboard"
+format: html
+editor: visual
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+[People Migration Rate]{style="font-size: 24px;color: #e87807"} [- It is defined as the difference between number of people entering a country and leaving the country ***(People Entering - People Leaving)***. Since countries differ in size and population, we are calculating the rate per 1000 population as a normalization factor. People tend to migrate from 1 country to another due to various reasons.]{style="font-size: 14px; color:black"}
+
+[**Average Migration Rate**]{style="font-size: 20px;"}
+
+::: columns
+::: {.column width="70%"}
+```{r echo=FALSE, fig.width=6, fig.height=4}
+install.packages("tidyverse")
+install.packages("maps")
+library(tidyverse)
+library(maps)
+
+# Read the CSV files
+metadata <- read_csv("/cloud/project/UnicefData/unicef_metadata.csv")
+indicator_data <- read_csv("/cloud/project/UnicefData/unicef_indicator_2.csv")
+continent_data <- read_csv("/cloud/project/UnicefData/data_right_3.csv")
+
+# Merge the indicator_data with metadata and continent_data
+total_data <- indicator_data %>%
+  merge(metadata, by.x = c("country", "alpha_2_code", "alpha_3_code", "numeric_code", "time_period"),
+        by.y = c("country", "alpha_2_code", "alpha_3_code", "numeric_code", "year")) %>%
+  merge(continent_data, by = "country")
+
+# Calculate the average migration rate for each continent across years
+average_by_continent <- total_data %>%
+  group_by(continent) %>%
+  summarise(average_obs_value = mean(obs_value, na.rm = TRUE))
+
+# Create a bar chart
+average_by_continent %>%
+  ggplot(aes(x = continent, y = average_obs_value, fill = continent)) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(limits = c(-3, 6), breaks = seq(-3, 6, by = 1)) +
+  labs(title = "Average Migration Rate",
+       x = "Continent",
+       y = "Migration Rate") +
+  scale_fill_brewer(palette = "Set1") + 
+  guides(fill = FALSE) + 
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.major.y = element_line(color = "#e6e6e3"), 
+        panel.grid.minor.y = element_blank(), 
+        panel.border = element_blank())
+```
+:::
+
+::: {.column width="30%"}
+[By looking at the statistics over the years, people seem to love]{style="font-size: 14px; color:black"} [Ocenia continent]{style="font-size: 14px; background-color: yellow;"} [(comprising of Australia and New Zealand) a lot. Historically, colonization had led to significant migration from **Europe to Oceania** and the trend has been carried over till recent times as well through skilled migration programs.]{style="font-size: 14px; color:black"}
+:::
+:::
+
+[Now that we've had a look at the continent wise migration, let us take deeper look at the Migration trend across the years by looking at the *maximum and minimum values* for each year. There seems to have been few abnormalities in the trend and let us look into the same.]{style="font-size: 14px; color:black"}
+
+[**Migration Trend**]{style="font-size: 20px;"}
+
+```{r}
+# Calculate max and min obs_value for each year in each continent
+maxmin_by_continent <- total_data %>%
+  group_by(continent, time_period) %>%
+  summarise(max_obs_value = max(obs_value),
+            min_obs_value = min(obs_value))
+
+
+# Create time series plot for African continent
+ggplot(maxmin_by_continent, aes(x = time_period, y = min_obs_value, ymax = max_obs_value)) +
+  geom_line(aes(group = continent), color = "#db0802", size = 1) +  
+  geom_line(aes(y = max_obs_value, group = continent), color = "#229602", size = 1) + 
+  labs(x = "Year",
+       y = "Migration Rate",
+       color = "continent") + 
+  facet_wrap(~continent, ncol = 5) +
+  scale_x_continuous(breaks = seq(1960, 2022, by = 30)) + 
+  theme_minimal() + 
+  guides(color = FALSE) + 
+  theme(strip.text.x = element_text(size = 8),
+        panel.spacing.x = unit(1, "lines"))
+```
+
+[There seems to be some drastic difference in the ***Asian continent*** near the 2000s. We'll take a closer look at the continent's distribution in the map over that decade and from the same, we can see that in 1990s due to war between [Iran, Iraq and Kuwait](https://en.wikipedia.org/wiki/Iraqi_invasion_of_Kuwait), people started emigrating from these countries on a large scale as evident below.]{style="font-size: 14px; color:#db0802"}
+
+[**Migration Rate in Each Country in 1990**]{style="font-size: 20px;"}
+
+```{r}
+world_map <- map_data("world")
+
+# Filter the total_data for the year 1990 and merge with world map data
+migration_data_1990 <- total_data %>%
+  filter(time_period == 1990) %>%
+  merge(world_map, by.x = c("country"), by.y = c("region"), all.x = TRUE)
+
+
+# Plot the world map
+ggplot() +
+  geom_polygon(data = migration_data_1990, aes(x = long, y = lat, group = group, fill = obs_value)) +
+  scale_fill_gradient(low = "#e80c0c", high = "#37c43e", name = "obs_value", limits = c(-500, 0), breaks = seq(-500, 0, by = 100)) +
+  theme_minimal() +
+  theme(legend.position = "hide")
+```
+
+[When we delve into the data of one of the countries, ***Kuwait***, we uncover a compelling narrative surrounding the relationship between inflation and migration rates across successive years. By scrutinizing the intricate patterns within these variables, we gain invaluable insights into the economic and social dynamics shaping the migration rate over time.]{style="font-size: 14px;"}
+
+[**Inflation vs Migration Rate in Kuwait**]{style="font-size: 20px;"}
+
+```{r}
+# Create scatter plot
+total_data %>%
+  filter(country == "Kuwait") %>%
+ggplot(aes(x = time_period, y = obs_value, size = `Inflation, consumer prices (annual %)`, color = obs_value)) +
+  geom_point(alpha=0.7) +
+  scale_color_gradient(low = "#98e2eb", high = "#ed8582", name = "obs_value") +
+  labs(x = "Year",
+       y = "Migration Rate") +
+  theme_minimal() + 
+  theme(legend.position = "hide")
+```
+
+[Comparing GDP and migration rate can further provide valuable insights into a country's economic and social dynamics. A rising GDP often indicates economic growth and prosperity, attracting migrants seeking better opportunities. On the other hand, a declining or stagnant GDP may lead to emigration as people seek opportunities elsewhere. Analyzing the correlation between GDP and migration rate can reveal patterns such as brain drain from less developed to more developed economies, or migration trends in response to economic downturns or booms.]{style="font-size: 14px;"}
+
+[**Migration Rate vs GDP IN 1990**]{style="font-size: 20px;"}
+
+```{r}
+# Create scatter plot
+total_data %>%
+ggplot(aes(x = `GDP per capita (constant 2015 US$)`, y = obs_value, size = `Population, total`, color = continent)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_manual(values = c("Asia" = "#ed7c68", "Europe" = "#83b0f7", "Africa" = "#85a7d6", "Americas" = "#f7b474", "Oceania" = "#87e37b")) +
+  labs(x = "GDP per capita", y = "Migration Rate", color="Continent") +
+  theme_minimal() + 
+  guides(size = FALSE) + 
+  scale_x_continuous(labels = scales::label_number(scale = 1e-3, suffix = "K"), breaks = seq(0, 100000, by = 25000))
+```
+
+[From these information, the relationship between wars, migration rate, inflation and GDP has been discussed and it seems to be complex and multifaceted. Each factor has an influence on each of the other factors and vice versa. By understanding the interconnections between these factors using the graphs above, we will be able to develop strategies to overcome conflicts, migration and inflation (i.e., we got to know how war affects the migration rate and now if any war is expected or current, we will be able to estimate the impact from this).]{style="font-size: 14px;"}
+
+[**Conclusion**]{style="font-size: 20px;"}
+
+[In light of the current war in Iran, this understanding takes on added significance. The impacts of war extend far beyond the battlefield, affecting migration patterns, economic stability, and inflation rates both domestically and regionally. By leveraging insights gained from analyzing these relationships, policymakers and stakeholders can better anticipate and mitigate the socioeconomic impacts of the conflict. This includes estimating potential changes in migration patterns, anticipating inflationary pressures, and devising strategies to support affected populations and promote stability in the region.]{style="font-size: 14px;"}
