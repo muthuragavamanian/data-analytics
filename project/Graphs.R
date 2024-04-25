@@ -24,8 +24,7 @@ average_by_continent %>%
   ggplot(aes(x = continent, y = average_obs_value, fill = continent)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(limits = c(-3, 6), breaks = seq(-3, 6, by = 1)) +
-  labs(title = "Average Migration Rate",
-       x = "Continent",
+  labs(x = "Continent",
        y = "Migration Rate") +
   scale_fill_brewer(palette = "Set1") + 
   guides(fill = FALSE) + 

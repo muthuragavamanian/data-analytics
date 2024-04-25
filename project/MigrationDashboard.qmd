@@ -41,8 +41,7 @@ average_by_continent %>%
   ggplot(aes(x = continent, y = average_obs_value, fill = continent)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(limits = c(-3, 6), breaks = seq(-3, 6, by = 1)) +
-  labs(title = "Average Migration Rate",
-       x = "Continent",
+  labs(x = "Continent",
        y = "Migration Rate") +
   scale_fill_brewer(palette = "Set1") + 
   guides(fill = FALSE) + 
@@ -56,11 +55,11 @@ average_by_continent %>%
 :::
 
 ::: {.column width="30%"}
-[By looking at the statistics over the years, people seem to love]{style="font-size: 14px; color:black"} [Ocenia continent]{style="font-size: 14px; background-color: yellow;"} [(comprising of Australia and New Zealand) a lot. Historically, colonization had led to significant migration from **Europe to Oceania** and the trend has been carried over till recent times as well through skilled migration programs.]{style="font-size: 14px; color:black"}
+[By looking at the statistics over the years, people seem to love]{style="font-size: 14px; color:black"} [**Ocenia continent**]{style="font-size: 14px; background-color: yellow;"} [(comprising of Australia and New Zealand) a lot. Historically, colonization had led to significant migration from [**Europe to Oceania**]{style="font-size: 14px; background-color: yellow;"} and the trend has been carried over till recent times as well through skilled migration programs.]{style="font-size: 14px; color:black"}
 :::
 :::
 
-[Now that we've had a look at the continent wise migration, let us take deeper look at the Migration trend across the years by looking at the *maximum and minimum values* for each year. There seems to have been few abnormalities in the trend and let us look into the same.]{style="font-size: 14px; color:black"}
+[Now that we've had a look at the continent wise migration, let us take deeper look at the Migration trend across the years by looking at the ***maximum and minimum values*** for each year. There seems to have been few abnormalities in the trend and let us look into the same.]{style="font-size: 14px; color:black"}
 
 [**Migration Trend**]{style="font-size: 20px;"}
 
@@ -87,7 +86,7 @@ ggplot(maxmin_by_continent, aes(x = time_period, y = min_obs_value, ymax = max_o
         panel.spacing.x = unit(1, "lines"))
 ```
 
-[There seems to be some drastic difference in the ***Asian continent*** near the 2000s. We'll take a closer look at the continent's distribution in the map over that decade and from the same, we can see that in 1990s due to war between [Iran, Iraq and Kuwait](https://en.wikipedia.org/wiki/Iraqi_invasion_of_Kuwait), people started emigrating from these countries on a large scale as evident below.]{style="font-size: 14px; color:#db0802"}
+[There seems to be some drastic difference in the ***Asian continent*** near the 90s. We'll take a closer look at the continent's distribution in the map over that decade and from the same, we can see that in 1990s due to war between [Iran, Iraq and Kuwait](https://en.wikipedia.org/wiki/Iraqi_invasion_of_Kuwait), people started emigrating from these countries on a large scale as evident below.]{style="font-size: 14px; color:#db0802"}
 
 [**Migration Rate in Each Country in 1990**]{style="font-size: 20px;"}
 
@@ -108,7 +107,7 @@ ggplot() +
   theme(legend.position = "hide")
 ```
 
-[When we delve into the data of one of the countries, ***Kuwait***, we uncover a compelling narrative surrounding the relationship between inflation and migration rates across successive years. By scrutinizing the intricate patterns within these variables, we gain invaluable insights into the economic and social dynamics shaping the migration rate over time.]{style="font-size: 14px;"}
+[When we delve into the data of one of the countries, ***Kuwait***, we uncover a compelling narrative surrounding the relationship between inflation and migration rates across successive years. By scrutinizing the intricate patterns within these variables, we gain invaluable insights into the **economic and social dynamics** shaping the migration rate over time.]{style="font-size: 14px;"}
 
 [**Inflation vs Migration Rate in Kuwait**]{style="font-size: 20px;"}
 
@@ -125,7 +124,7 @@ ggplot(aes(x = time_period, y = obs_value, size = `Inflation, consumer prices (a
   theme(legend.position = "hide")
 ```
 
-[Comparing GDP and migration rate can further provide valuable insights into a country's economic and social dynamics. A rising GDP often indicates economic growth and prosperity, attracting migrants seeking better opportunities. On the other hand, a declining or stagnant GDP may lead to emigration as people seek opportunities elsewhere. Analyzing the correlation between GDP and migration rate can reveal patterns such as brain drain from less developed to more developed economies, or migration trends in response to economic downturns or booms.]{style="font-size: 14px;"}
+[Comparing GDP and migration rate can further provide valuable insights into a country's economic and social dynamics. A rising **GDP often indicates economic growth** and prosperity, attracting migrants seeking better opportunities. On the other hand, a declining or stagnant GDP may lead to emigration as people seek opportunities elsewhere. Analyzing the correlation between GDP and migration rate can reveal patterns such as **migration trends in response to economic downturns** or booms or brain drain from less developed to more developed economies.]{style="font-size: 14px;"}
 
 [**Migration Rate vs GDP IN 1990**]{style="font-size: 20px;"}
 
@@ -142,8 +141,8 @@ ggplot(aes(x = `GDP per capita (constant 2015 US$)`, y = obs_value, size = `Popu
   scale_x_continuous(labels = scales::label_number(scale = 1e-3, suffix = "K"), breaks = seq(0, 100000, by = 25000))
 ```
 
-[From these information, the relationship between wars, migration rate, inflation and GDP has been discussed and it seems to be complex and multifaceted. Each factor has an influence on each of the other factors and vice versa. By understanding the interconnections between these factors using the graphs above, we will be able to develop strategies to overcome conflicts, migration and inflation (i.e., we got to know how war affects the migration rate and now if any war is expected or current, we will be able to estimate the impact from this).]{style="font-size: 14px;"}
+[From these information, the **relationship between wars, migration rate, inflation and GDP** has been discussed and it seems to be complex and multifaceted. Each factor has an influence on each of the other factors and vice versa. By understanding the interconnections between these factors using the graphs above, we will be able to **develop strategies to overcome conflicts, migration and inflation** (i.e., we got to know how war affects the migration rate and now if any war is expected or current, we will be able to estimate the impact from this).]{style="font-size: 14px;"}
 
 [**Conclusion**]{style="font-size: 20px;"}
 
-[In light of the current war in Iran, this understanding takes on added significance. The impacts of war extend far beyond the battlefield, affecting migration patterns, economic stability, and inflation rates both domestically and regionally. By leveraging insights gained from analyzing these relationships, policymakers and stakeholders can better anticipate and mitigate the socioeconomic impacts of the conflict. This includes estimating potential changes in migration patterns, anticipating inflationary pressures, and devising strategies to support affected populations and promote stability in the region.]{style="font-size: 14px;"}
+[In light of the **current war in Iran**, this understanding takes on added significance. The impacts of war extend far beyond the battlefield, affecting migration patterns, economic stability, and inflation rates both domestically and regionally. By leveraging insights gained from analyzing these relationships, policymakers and stakeholders can better **anticipate and mitigate the socioeconomic impacts of the conflict**. This includes estimating potential changes in migration patterns, anticipating inflationary pressures, and devising strategies to support affected populations and promote stability in the region.]{style="font-size: 14px;"}
